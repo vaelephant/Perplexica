@@ -9,7 +9,7 @@ export const searchHandlers: Record<string, MetaSearchAgent> = {
     queryGeneratorFewShots: prompts.webSearchRetrieverFewShots,
     rerank: true,
     rerankThreshold: 0.3,
-    searchWeb: true,
+    searchWeb: false,
   }),
   academicSearch: new MetaSearchAgent({
     activeEngines: ['arxiv', 'google scholar', 'pubmed'],
@@ -18,7 +18,7 @@ export const searchHandlers: Record<string, MetaSearchAgent> = {
     queryGeneratorFewShots: prompts.webSearchRetrieverFewShots,
     rerank: true,
     rerankThreshold: 0,
-    searchWeb: true,
+    searchWeb: false,
   }),
   writingAssistant: new MetaSearchAgent({
     activeEngines: [],
@@ -36,7 +36,7 @@ export const searchHandlers: Record<string, MetaSearchAgent> = {
     queryGeneratorFewShots: prompts.webSearchRetrieverFewShots,
     rerank: false,
     rerankThreshold: 0,
-    searchWeb: true,
+    searchWeb: false,
   }),
   youtubeSearch: new MetaSearchAgent({
     activeEngines: ['youtube'],
@@ -45,7 +45,7 @@ export const searchHandlers: Record<string, MetaSearchAgent> = {
     queryGeneratorFewShots: prompts.webSearchRetrieverFewShots,
     rerank: true,
     rerankThreshold: 0.3,
-    searchWeb: true,
+    searchWeb: false,
   }),
   redditSearch: new MetaSearchAgent({
     activeEngines: ['reddit'],
@@ -54,6 +54,6 @@ export const searchHandlers: Record<string, MetaSearchAgent> = {
     queryGeneratorFewShots: prompts.webSearchRetrieverFewShots,
     rerank: true,
     rerankThreshold: 0.3,
-    searchWeb: true,
+    searchWeb:  false,
   }),
 };

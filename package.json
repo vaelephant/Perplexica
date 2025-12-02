@@ -47,6 +47,7 @@
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.2.2",
     "winston": "^3.17.0",
+    "xlsx": "^0.18.5",
     "yet-another-react-lightbox": "^3.17.2",
     "zod": "^3.22.4"
   },
@@ -58,6 +59,7 @@
     "@types/pdf-parse": "^1.1.4",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/xlsx": "^0.0.35",
     "autoprefixer": "^10.0.1",
     "drizzle-kit": "^0.30.5",
     "eslint": "^8",

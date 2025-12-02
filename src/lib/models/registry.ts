@@ -74,23 +74,65 @@ class ModelRegistry {
   }
 
   async loadChatModel(providerId: string, modelName: string) {
+    console.log('[MODEL] ===== 开始加载聊天模型 =====');
+    console.log('[MODEL] Provider ID:', providerId);
+    console.log('[MODEL] Model Name:', modelName);
+    const startTime = Date.now();
+    
     const provider = this.activeProviders.find((p) => p.id === providerId);
 
-    if (!provider) throw new Error('Invalid provider id');
+    if (!provider) {
+      console.error('[MODEL] 错误: 无效的 Provider ID:', providerId);
+      throw new Error('Invalid provider id');
+    }
 
-    const model = await provider.provider.loadChatModel(modelName);
-
-    return model;
+    console.log('[MODEL] Provider 名称:', provider.name);
+    console.log('[MODEL] Provider 类型:', provider.type);
+    console.log('[MODEL] 调用 provider.loadChatModel...');
+    
+    try {
+      const model = await provider.provider.loadChatModel(modelName);
+      const duration = Date.now() - startTime;
+      console.log(`[MODEL] 聊天模型加载成功（耗时: ${duration}ms）`);
+      console.log('[MODEL] ===== 聊天模型加载完成 =====');
+      return model;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      console.error(`[MODEL] 聊天模型加载失败（耗时: ${duration}ms）`);
+      console.error('[MODEL] 错误详情:', error);
+      throw error;
+    }
   }
 
   async loadEmbeddingModel(providerId: string, modelName: string) {
+    console.log('[MODEL] ===== 开始加载嵌入模型 =====');
+    console.log('[MODEL] Provider ID:', providerId);
+    console.log('[MODEL] Model Name:', modelName);
+    const startTime = Date.now();
+    
     const provider = this.activeProviders.find((p) => p.id === providerId);
 
-    if (!provider) throw new Error('Invalid provider id');
+    if (!provider) {
+      console.error('[MODEL] 错误: 无效的 Provider ID:', providerId);
+      throw new Error('Invalid provider id');
+    }
 
-    const model = await provider.provider.loadEmbeddingModel(modelName);
-
-    return model;
+    console.log('[MODEL] Provider 名称:', provider.name);
+    console.log('[MODEL] Provider 类型:', provider.type);
+    console.log('[MODEL] 调用 provider.loadEmbeddingModel...');
+    
+    try {
+      const model = await provider.provider.loadEmbeddingModel(modelName);
+      const duration = Date.now() - startTime;
+      console.log(`[MODEL] 嵌入模型加载成功（耗时: ${duration}ms）`);
+      console.log('[MODEL] ===== 嵌入模型加载完成 =====');
+      return model;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      console.error(`[MODEL] 嵌入模型加载失败（耗时: ${duration}ms）`);
+      console.error('[MODEL] 错误详情:', error);
+      throw error;
+    }
   }
 
   async addProvider(

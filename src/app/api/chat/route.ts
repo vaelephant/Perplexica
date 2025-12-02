@@ -233,10 +233,12 @@ const handleHistorySave = async (
 
 export const POST = async (req: Request) => {
   try {
+    console.log('[CHAT] ===== 开始处理聊天请求 =====');
     const reqBody = (await req.json()) as Body;
 
     const parseBody = safeValidateBody(reqBody);
     if (!parseBody.success) {
+      console.error('[CHAT] 请求体验证失败:', parseBody.error);
       return Response.json(
         { message: 'Invalid request body', error: parseBody.error },
         { status: 400 },
@@ -246,7 +248,15 @@ export const POST = async (req: Request) => {
     const body = parseBody.data as Body;
     const { message } = body;
 
+    console.log('[CHAT] 消息内容:', message.content.substring(0, 100) + '...');
+    console.log('[CHAT] 聊天ID:', message.chatId);
+    console.log('[CHAT] 焦点模式:', body.focusMode);
+    console.log('[CHAT] 优化模式:', body.optimizationMode);
+    console.log('[CHAT] 上传的文件ID:', body.files);
+    console.log('[CHAT] 历史消息数量:', body.history.length);
+
     if (message.content === '') {
+      console.warn('[CHAT] 警告: 消息内容为空');
       return Response.json(
         {
           message: 'Please provide a message to process',
@@ -254,6 +264,12 @@ export const POST = async (req: Request) => {
         { status: 400 },
       );
     }
+
+    console.log('[CHAT] 加载模型...');
+    console.log('[CHAT] 聊天模型 Provider ID:', body.chatModel.providerId);
+    console.log('[CHAT] 聊天模型 Key:', body.chatModel.key);
+    console.log('[CHAT] 嵌入模型 Provider ID:', body.embeddingModel.providerId);
+    console.log('[CHAT] 嵌入模型 Key:', body.embeddingModel.key);
 
     const registry = new ModelRegistry();
 
@@ -265,8 +281,11 @@ export const POST = async (req: Request) => {
       ),
     ]);
 
+    console.log('[CHAT] 模型加载完成');
+
     const humanMessageId =
       message.messageId ?? crypto.randomBytes(7).toString('hex');
+    console.log('[CHAT] 用户消息ID:', humanMessageId);
 
     const history: BaseMessage[] = body.history.map((msg) => {
       if (msg[0] === 'human') {
@@ -280,9 +299,12 @@ export const POST = async (req: Request) => {
       }
     });
 
+    console.log('[CHAT] 历史消息处理完成，消息数量:', history.length);
+
     const handler = searchHandlers[body.focusMode];
 
     if (!handler) {
+      console.error('[CHAT] 错误: 无效的焦点模式:', body.focusMode);
       return Response.json(
         {
           message: 'Invalid focus mode',
@@ -291,6 +313,8 @@ export const POST = async (req: Request) => {
       );
     }
 
+    console.log('[CHAT] 开始搜索和回答...');
+    console.log('[CHAT] 传递给处理器的文件ID:', body.files);
     const stream = await handler.searchAndAnswer(
       message.content,
       history,
@@ -300,6 +324,7 @@ export const POST = async (req: Request) => {
       body.files,
       body.systemInstructions as string,
     );
+    console.log('[CHAT] 搜索和回答完成，开始流式返回');
 
     const responseStream = new TransformStream();
     const writer = responseStream.writable.getWriter();
@@ -316,7 +341,11 @@ export const POST = async (req: Request) => {
       },
     });
   } catch (err) {
-    console.error('An error occurred while processing chat request:', err);
+    console.error('[CHAT] ===== 聊天请求处理失败 =====');
+    console.error('[CHAT] 错误详情:', err);
+    if (err instanceof Error) {
+      console.error('[CHAT] 错误堆栈:', err.stack);
+    }
     return Response.json(
       { message: 'An error occurred while processing chat request' },
       { status: 500 },

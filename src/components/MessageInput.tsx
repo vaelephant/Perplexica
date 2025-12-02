@@ -6,6 +6,9 @@ import Attach from './MessageInputActions/Attach';
 import CopilotToggle from './MessageInputActions/Copilot';
 import { File } from './ChatWindow';
 import AttachSmall from './MessageInputActions/AttachSmall';
+import Optimization from './MessageInputActions/Optimization';
+import Focus from './MessageInputActions/Focus';
+import ModelSelector from './MessageInputActions/ChatModelSelector';
 import { useChat } from '@/lib/hooks/useChat';
 
 const MessageInput = () => {
@@ -68,7 +71,6 @@ const MessageInput = () => {
         mode === 'multi' ? 'flex-col rounded-2xl' : 'flex-row rounded-full',
       )}
     >
-      {mode === 'single' && <AttachSmall />}
       <TextareaAutosize
         ref={inputRef}
         value={message}
@@ -80,7 +82,12 @@ const MessageInput = () => {
         placeholder="Ask a follow-up"
       />
       {mode === 'single' && (
-        <div className="flex flex-row items-center space-x-4">
+        <div className="flex flex-row items-center space-x-2">
+          <div className="flex flex-row items-center space-x-1">
+            <ModelSelector />
+            <Focus />
+            <AttachSmall />
+          </div>
           <CopilotToggle
             copilotEnabled={copilotEnabled}
             setCopilotEnabled={setCopilotEnabled}
@@ -95,15 +102,20 @@ const MessageInput = () => {
       )}
       {mode === 'multi' && (
         <div className="flex flex-row items-center justify-between w-full pt-2">
-          <AttachSmall />
-          <div className="flex flex-row items-center space-x-4">
+          <Optimization />
+          <div className="flex flex-row items-center space-x-2">
+            <div className="flex flex-row items-center space-x-1">
+              <ModelSelector />
+              <Focus />
+              <AttachSmall />
+            </div>
             <CopilotToggle
               copilotEnabled={copilotEnabled}
               setCopilotEnabled={setCopilotEnabled}
             />
             <button
               disabled={message.trim().length === 0 || loading}
-              className="bg-[#24A0ED] text-white text-black/50 dark:disabled:text-white/50 hover:bg-opacity-85 transition duration-100 disabled:bg-[#e0e0dc79] dark:disabled:bg-[#ececec21] rounded-full p-2"
+              className="bg-[#24A0ED] text-white disabled:text-black/50 dark:disabled:text-white/50 hover:bg-opacity-85 transition duration-100 disabled:bg-[#e0e0dc79] dark:disabled:bg-[#ececec21] rounded-full p-2"
             >
               <ArrowUp className="bg-background" size={17} />
             </button>

@@ -3,14 +3,24 @@ use_default_settings: true
 general:
   instance_name: 'searxng'
 
+server:
+  port: 8080
+  bind_address: "0.0.0.0"
+  # Allow API access from localhost and internal networks
+  http_protocol_version: '1.1'
+  # Secret key is set via SEARXNG_SECRET environment variable
+  # secret_key will be overwritten by ${SEARXNG_SECRET} from docker-compose
+
 search:
   autocomplete: 'google'
   formats:
     - html
     - json
+  # Increase timeout for API requests
+  result_timeout: 6.0
 
-server:
-  secret_key: 'a2fb23f1b02e6ee83875b09826990de0f6bd908b6638e8c10277d415f6ab852b' # Is overwritten by ${SEARXNG_SECRET}
+#server:
+ # secret_key: 'a2fb23f1b02e6ee83875b09826990de0f6bd908b6638e8c10277d415f6ab852b' # Is overwritten by ${SEARXNG_SECRET}
 
 engines:
   - name: wolframalpha

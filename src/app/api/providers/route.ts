@@ -17,6 +17,10 @@ export const GET = async (req: Request) => {
       },
       {
         status: 200,
+        headers: {
+          // 添加缓存头，减少重复请求
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        },
       },
     );
   } catch (err) {

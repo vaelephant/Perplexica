@@ -81,6 +81,10 @@ interface EmbeddingModelProvider {
   providerId: string;
 }
 
+// 配置缓存机制
+let configCache: { providers: any[]; timestamp: number } | null = null;
+const CACHE_DURATION = 5 * 60 * 1000; // 5分钟缓存
+
 const checkConfig = async (
   setChatModelProvider: (provider: ChatModelProvider) => void,
   setEmbeddingModelProvider: (provider: EmbeddingModelProvider) => void,
@@ -95,20 +99,35 @@ const checkConfig = async (
       'embeddingModelProviderId',
     );
 
-    const res = await fetch(`/api/providers`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    // 检查缓存
+    let providers: MinimalProvider[];
+    if (configCache && Date.now() - configCache.timestamp < CACHE_DURATION) {
+      console.log('[CONFIG] 使用缓存的 providers 数据');
+      providers = configCache.providers;
+    } else {
+      console.log('[CONFIG] 从 API 获取 providers 数据');
+      const res = await fetch(`/api/providers`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    if (!res.ok) {
-      throw new Error(
-        `Provider fetching failed with status code ${res.status}`,
-      );
+      if (!res.ok) {
+        throw new Error(
+          `Provider fetching failed with status code ${res.status}`,
+        );
+      }
+
+      const data = await res.json();
+      providers = data.providers;
+      
+      // 更新缓存
+      configCache = {
+        providers: providers,
+        timestamp: Date.now(),
+      };
+      console.log('[CONFIG] Providers 数据已缓存');
     }
-
-    const data = await res.json();
-    const providers: MinimalProvider[] = data.providers;
 
     if (providers.length === 0) {
       throw new Error(
